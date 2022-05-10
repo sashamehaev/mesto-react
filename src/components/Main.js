@@ -4,7 +4,7 @@ import btnAvatar from '../images/pen.svg';
 import btnUser from '../images/edit-button.svg';
 import btnCard from '../images/add-button.svg';
 import { api } from '../utils/Api';
-import '../index.css';
+
 
 class Main extends React.Component {
     constructor(props) {

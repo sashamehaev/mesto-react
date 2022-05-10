@@ -1,5 +1,4 @@
 import React from 'react';
-import '../index.css';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
@@ -16,7 +15,7 @@ class App extends React.Component {
       isEditProfilePopupOpen: false,
       isAddPlacePopupOpen: false,
       isEditAvatarPopupOpen: false,
-      selectedCard: false
+      selectedCard: {}
     }
   }
 
@@ -42,7 +41,7 @@ class App extends React.Component {
       isAddPlacePopupOpen: false,
       isEditProfilePopupOpen: false,
       isEditAvatarPopupOpen: false,
-      selectedCard: false
+      selectedCard: {}
     });
   }
 
