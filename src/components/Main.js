@@ -4,76 +4,74 @@ import btnAvatar from '../images/pen.svg';
 import btnUser from '../images/edit-button.svg';
 import btnCard from '../images/add-button.svg';
 import { api } from '../utils/Api';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 
-class Main extends React.Component {
-    constructor(props) {
-        super(props);
-        
+function Main(props) {
+    const [cards, setCards] = React.useState([]);
+    const currentUser = React.useContext(CurrentUserContext);
 
-        this.state = {
-            userName: '',
-            userDescription: '',
-            userAvatar: '',
-            cards: []
-        }
+    function handleCardLike(card) {
+        // Снова проверяем, есть ли уже лайк на этой карточке
+        const isLiked = card.likes.some(i => i._id === currentUser._id);
+
+        // Отправляем запрос в API и получаем обновлённые данные карточки
+        api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
+            setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        });
     }
 
-    componentDidMount() {
+    function handleCardDelete(card) {
+        api.deleteCard(card._id).then(() => {
+            setCards((state) => state.filter((item) => card._id !== item._id));
+            
+        });
+    }
 
-        api.getUserInfo()
-            .then((item) => {
-                this.setState({
-                    userName: item.name,
-                    userDescription: item.about,
-                    userAvatar: item.avatar
-                });
-            });
 
+    React.useEffect(() => {
         api.getInitialsCard()
             .then((item) => {
-                this.setState({
-                    cards: item
-                });
+                setCards(item);
             });
-    }
 
-    render() {
+    }, []);
 
-        return (
-            <main>
-                <section className="profile">
-                    <div className="profile__container">
-                        <div onClick={this.props.onEditAvatar} className="profile__container-avatar">
-                            <div className="profile__edit-photo-container">
-                                <img src={btnAvatar} className="profile__edit-photo" />
-                            </div>
-                            <img alt="Фото профиля" src={this.state.userAvatar} className="profile__avatar" />
+
+    return (
+        <main>
+            <section className="profile">
+                <div className="profile__container">
+                    <div onClick={props.onEditAvatar} className="profile__container-avatar">
+                        <div className="profile__edit-photo-container">
+                            <img src={btnAvatar} className="profile__edit-photo" />
                         </div>
-
-                        <div className="profile__info">
-                            <div className="profile__info-container">
-                                <h1 className="profile__name">{this.state.userName}</h1>
-                                <button type="button" className="profile__edit-button" onClick={this.props.onEditProfile}>
-                                    <img src={btnUser} alt="Кнопка редактировать профиль" className="profile__edit-button-img" />
-                                </button>
-                            </div>
-                            <p className="profile__job">{this.state.userDescription}</p>
-                        </div>
+                        <img alt="Фото профиля" src={currentUser.avatar} className="profile__avatar" />
                     </div>
-                    <button type="button" className="profile__add-button" onClick={this.props.onAddPlace}>
-                        <img src={btnCard} alt="Кнопка добавить карточку" className="profile__add-button-img" />
-                    </button>
-                </section>
 
-                <section className="elements">
-                    {this.state.cards.map((item) => (
-                        <Card card={item} key={item._id} handleCardClick={this.props.onCardClick} />
-                    ))}
-                </section>
-            </main>
-        );
-    }
+                    <div className="profile__info">
+                        <div className="profile__info-container">
+                            <h1 className="profile__name">{currentUser.name}</h1>
+                            <button type="button" className="profile__edit-button" onClick={props.onEditProfile}>
+                                <img src={btnUser} alt="Кнопка редактировать профиль" className="profile__edit-button-img" />
+                            </button>
+                        </div>
+                        <p className="profile__job">{currentUser.about}</p>
+                    </div>
+                </div>
+                <button type="button" className="profile__add-button" onClick={props.onAddPlace}>
+                    <img src={btnCard} alt="Кнопка добавить карточку" className="profile__add-button-img" />
+                </button>
+            </section>
+
+            <section className="elements">
+                {cards.map((item) => (
+                    <Card card={item} key={item._id} handleCardClick={props.onCardClick} onCardLike={handleCardLike} onCardDelete={handleCardDelete} />
+                ))}
+            </section>
+        </main>
+    );
+
 
 }
 

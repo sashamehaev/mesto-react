@@ -3,79 +3,80 @@ import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
+import EditProfilePopup from './EditProfilePopup';
+import EditAvatarPopup from './EditAvatarPopup';
 import ImagePopup from './ImagePopup';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { api } from '../utils/Api';
 
 
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
+function App() {
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState();
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState();
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState();
+  const [selectedCard, setSelectedCard] = React.useState({});
+  const [currentUser, setCurrentUser] = React.useState({});
 
-    this.state = {
-      isEditProfilePopupOpen: false,
-      isAddPlacePopupOpen: false,
-      isEditAvatarPopupOpen: false,
-      selectedCard: {}
-    }
+
+  function handleEditAvatarClick() {
+    setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
   }
 
-
-  handleEditAvatarClick = () => {
-    this.setState({ isEditAvatarPopupOpen: !this.state.isEditAvatarPopupOpen });
+  function handleEditProfileClick() {
+    setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
   }
 
-  handleEditProfileClick = () => {
-    this.setState({ isEditProfilePopupOpen: !this.state.isEditProfilePopupOpen });
+  function handleAddPlaceClick() {
+    setIsAddPlacePopupOpen(!isAddPlacePopupOpen);
   }
 
-  handleAddPlaceClick = () => {
-    this.setState({ isAddPlacePopupOpen: !this.state.isAddPlacePopupOpen });
+  function handleCardClick(card) {
+    setSelectedCard(card);
   }
 
-  handleCardClick = (card) => {
-    this.setState({ selectedCard: card });
+  function closeAllPopups() {
+    setIsEditAvatarPopupOpen(false);
+    setIsEditProfilePopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setSelectedCard({});
   }
 
-  closeAllPopups = () => {
-    this.setState({
-      isAddPlacePopupOpen: false,
-      isEditProfilePopupOpen: false,
-      isEditAvatarPopupOpen: false,
-      selectedCard: {}
-    });
+  function handleUpdateUser(user) {
+    api.setUserInfo(user).then((item) => setCurrentUser(item));
   }
 
-  render() {
+  function handleUpdateAvatar(avatar) {
+    api.setAvatar(avatar).then((item) => setCurrentUser(item));
+  }
 
+  React.useEffect(() => {
+    api.getUserInfo()
+      .then((item) => {
+        setCurrentUser(item);
+      });
 
-    return (
-      <>
+  }, []);
+
+  return (
+    <>
+      <CurrentUserContext.Provider value={currentUser}>
         <Header />
         <Main
-          onEditProfile={this.handleEditProfileClick}
-          onAddPlace={this.handleAddPlaceClick}
-          onEditAvatar={this.handleEditAvatarClick}
-          onCardClick={this.handleCardClick}
+          onEditProfile={handleEditProfileClick}
+          onAddPlace={handleAddPlaceClick}
+          onEditAvatar={handleEditAvatarClick}
+          onCardClick={handleCardClick}
         />
         <Footer />
 
-        <PopupWithForm name="edit" title="Редактировать профиль" 
-          isOpen={this.state.isEditProfilePopupOpen} 
-          onClose={this.closeAllPopups}
-        >
-          <label className="form__field">
-            <input id="name-input" name="name" type="text" placeholder="Имя" className="form__input form__input_type_name" required minLength="2" maxLength="40" />
-            <span className="name-input-error form__input-error"></span>
-          </label>
-          <label className="form__field">
-            <input id="job-input" name="about" type="text" placeholder="О себе" className="form__input form__input_type_job" required minLength="2" maxLength="200" />
-            <span className="job-input-error form__input-error"></span>
-          </label>
-        </PopupWithForm>
+        <EditProfilePopup onUpdateUser={handleUpdateUser} isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} />
+        <EditAvatarPopup onUpdateAvatar={handleUpdateAvatar} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} />
+        
 
-        <PopupWithForm name="add" title="Новое место" 
-          isOpen={this.state.isAddPlacePopupOpen} 
-          onClose={this.closeAllPopups}
+        <PopupWithForm name="add" title="Новое место"
+          isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopups}
         >
           <label className="form__field">
             <input id="place-input" type="text" name="name" placeholder="Название" className="form__input form__input_type_place" required minLength="2" maxLength="30" />
@@ -87,26 +88,16 @@ class App extends React.Component {
           </label>
         </PopupWithForm>
 
-        <PopupWithForm name="avatar" title="Обновить аватар" 
-          isOpen={this.state.isEditAvatarPopupOpen} 
-          onClose={this.closeAllPopups}
-        >
-          <label className="form__field">
-            <input id="avatar-link-input" type="url" name="link" placeholder="Ссылка на картинку" className="form__input form__input_type_link" required />
-            <span className="avatar-link-input-error form__input-error"></span>
-          </label>
-        </PopupWithForm>
+        
 
         <PopupWithForm name="delete" title="Вы уверены?" />
 
-        <ImagePopup card={this.state.selectedCard} onClose={this.closeAllPopups} />
+        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+      </CurrentUserContext.Provider>
 
 
-      </>
-    );
-  }
-
-
+    </>
+  );
 }
 
 export default App;

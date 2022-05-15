@@ -1,32 +1,40 @@
 import React from 'react';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 
-class Card extends React.Component {
+function Card(props) {
+    const { card, handleCardClick, onCardLike, onCardDelete } = props;
+    const currentUser = React.useContext(CurrentUserContext);
+    const isOwn = card.owner._id === currentUser._id;
+    const cardDeleteButtonClassName = isOwn ? '' : 'element__delete_hidden';
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const cardLikeButtonClassName = isLiked ? 'element__like_active' : '';
 
-    handleClick = () => {
-        this.props.handleCardClick(this.props.card);
+    function handleLikeClick() {
+        onCardLike(card);
     }
 
-    render() {
-        const { card } = this.props;
+    function handleClick() {
+        handleCardClick(card);
+    }
 
-        return (
+    function handleDeleteClick() {
+        onCardDelete(card);
+    }
 
-            <div className="element">
-                <button className="element__delete"></button>
-                <img className="element__image" src={card.link} onClick={this.handleClick} />
-                <div className="element__description">
-                    <h2 className="element__title">{card.name}</h2>
-                    <div className="element__like-container">
-                        <button type="button" className="element__like"></button>
-                        <p className="element__like-value">{card.likes.length}</p>
-                    </div>
+    return (
+        <div className="element">
+            <button onClick={handleDeleteClick} className={`element__delete ${cardDeleteButtonClassName}`}></button>
+            <img alt={card.name} className="element__image" src={card.link} onClick={handleClick} />
+            <div className="element__description">
+                <h2 className="element__title">{card.name}</h2>
+                <div className="element__like-container">
+                    <button type="button" onClick={handleLikeClick} className={`element__like ${cardLikeButtonClassName}`}></button>
+                    <p className="element__like-value">{card.likes.length}</p>
                 </div>
             </div>
-
-        );
-    }
-
+        </div>
+    );
 }
 
 export default Card;
