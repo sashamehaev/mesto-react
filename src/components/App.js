@@ -6,6 +6,7 @@ import PopupWithForm from './PopupWithForm';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import ImagePopup from './ImagePopup';
+import AddPlacePopup from './AddPlacePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { api } from '../utils/Api';
 
@@ -17,6 +18,7 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState();
   const [selectedCard, setSelectedCard] = React.useState({});
   const [currentUser, setCurrentUser] = React.useState({});
+  const [cards, setCards] = React.useState([]);
 
 
   function handleEditAvatarClick() {
@@ -50,10 +52,36 @@ function App() {
     api.setAvatar(avatar).then((item) => setCurrentUser(item));
   }
 
+  function handleCardLike(card) {
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+
+    api.changeLikeCardStatus(card._id, isLiked).then((newCard) => {
+      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    });
+  }
+
+  function handleCardDelete(card) {
+    api.deleteCard(card._id).then(() => {
+      setCards((state) => state.filter((item) => card._id !== item._id));
+
+    });
+  }
+
+  function handleAddPlaceSubmit(card) {
+    api.addCard(card).then((newCard) => {
+      setCards([newCard, ...cards]);
+    });
+  }
+
   React.useEffect(() => {
     api.getUserInfo()
       .then((item) => {
         setCurrentUser(item);
+      });
+
+    api.getInitialsCard()
+      .then((item) => {
+        setCards(item);
       });
 
   }, []);
@@ -67,35 +95,24 @@ function App() {
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
           onCardClick={handleCardClick}
+          cards={cards}
+          onCardLike={handleCardLike}
+          onCardDelete={handleCardDelete} 
         />
         <Footer />
 
         <EditProfilePopup onUpdateUser={handleUpdateUser} isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} />
         <EditAvatarPopup onUpdateAvatar={handleUpdateAvatar} isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} />
-        
-
-        <PopupWithForm name="add" title="Новое место"
-          isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopups}
-        >
-          <label className="form__field">
-            <input id="place-input" type="text" name="name" placeholder="Название" className="form__input form__input_type_place" required minLength="2" maxLength="30" />
-            <span className="place-input-error form__input-error"></span>
-          </label>
-          <label className="form__field">
-            <input id="link-input" type="url" name="link" placeholder="Ссылка на картинку" className="form__input form__input_type_link" required />
-            <span className="link-input-error form__input-error"></span>
-          </label>
-        </PopupWithForm>
+        <AddPlacePopup onAddPlace={handleAddPlaceSubmit} isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} />
 
         
+
+
 
         <PopupWithForm name="delete" title="Вы уверены?" />
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
       </CurrentUserContext.Provider>
-
-
     </>
   );
 }
