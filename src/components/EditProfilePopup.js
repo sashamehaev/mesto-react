@@ -35,7 +35,7 @@ function EditProfilePopup(props) {
         >
             <label className="form__field">
                 <input id="name-input" name="name" 
-                    defaultValue={name} 
+                    value={name || ''} 
                     onChange={(e) => { setName(e.target.value) }} 
                     type="text" placeholder="Имя" 
                     className="form__input form__input_type_name" 
@@ -44,7 +44,7 @@ function EditProfilePopup(props) {
             </label>
             <label className="form__field">
                 <input id="job-input" name="about" 
-                    defaultValue={description} 
+                    value={description || ''} 
                     onChange={(e) => { setDescription(e.target.value) }} 
                     type="text" placeholder="О себе" 
                     className="form__input form__input_type_job" 
