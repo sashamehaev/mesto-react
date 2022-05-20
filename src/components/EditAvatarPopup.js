@@ -7,8 +7,6 @@ function EditAvatarPopup(props) {
     const avatarRef = React.useRef();
     const currentUser = React.useContext(CurrentUserContext);
 
-
-
     function handleSubmit(e) {
         e.preventDefault();
 

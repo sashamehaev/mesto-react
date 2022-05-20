@@ -23,19 +23,32 @@ function EditProfilePopup(props) {
     React.useEffect(() => {
         setName(currentUser.name);
         setDescription(currentUser.about);
-    }, [currentUser]);
+    }, [currentUser, isOpen]);
+
+    
 
     return (
+
         <PopupWithForm onSubmit={handleSubmit} name="edit" title="Редактировать профиль"
             isOpen={isOpen}
             onClose={onClose}
         >
             <label className="form__field">
-                <input id="name-input" name="name" value={name} onChange={(e) => {setName(e.target.value)}} type="text" placeholder="Имя" className="form__input form__input_type_name" required minLength="2" maxLength="40" />
+                <input id="name-input" name="name" 
+                    defaultValue={name} 
+                    onChange={(e) => { setName(e.target.value) }} 
+                    type="text" placeholder="Имя" 
+                    className="form__input form__input_type_name" 
+                    required minLength="2" maxLength="40" />
                 <span className="name-input-error form__input-error"></span>
             </label>
             <label className="form__field">
-                <input id="job-input" name="about" value={description} onChange={(e) => {setDescription(e.target.value)}} type="text" placeholder="О себе" className="form__input form__input_type_job" required minLength="2" maxLength="200" />
+                <input id="job-input" name="about" 
+                    defaultValue={description} 
+                    onChange={(e) => { setDescription(e.target.value) }} 
+                    type="text" placeholder="О себе" 
+                    className="form__input form__input_type_job" 
+                    required minLength="2" maxLength="200" />
                 <span className="job-input-error form__input-error"></span>
             </label>
         </PopupWithForm>

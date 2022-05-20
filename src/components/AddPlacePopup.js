@@ -7,15 +7,15 @@ function AddPlacePopup(props) {
     const [link, setLink] = React.useState('');
 
     function handleSubmit(e) {
-
         e.preventDefault();
-
         props.onAddPlace({
             name: place,
             link: link,
         });
         
+        e.target.reset();
     }
+
 
     return (
         <PopupWithForm onSubmit={handleSubmit} name="add" title="Новое место"

@@ -16,7 +16,7 @@ function PopupWithForm(props) {
                 <button type="button" className="popup__close" onClick={props.onClose}></button>
             </div>
         </div>
-    )
+    );
 }
 
 export default PopupWithForm;
