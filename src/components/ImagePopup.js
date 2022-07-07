@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 function ImagePopup(props) {
     const { card, onClose } = props;
     const isOpen = Object.keys(card).length ? 'popup_opened' : '';

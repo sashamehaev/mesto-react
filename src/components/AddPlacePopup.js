@@ -16,7 +16,6 @@ function AddPlacePopup(props) {
         e.target.reset();
     }
 
-
     return (
         <PopupWithForm onSubmit={handleSubmit} name="add" title="Новое место"
             isOpen={isOpen}

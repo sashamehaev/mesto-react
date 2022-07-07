@@ -10,8 +10,6 @@ import AddPlacePopup from './AddPlacePopup';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { api } from '../utils/Api';
 
-
-
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState();
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState();
@@ -139,10 +137,6 @@ function App() {
           onAddPlace={handleAddPlaceSubmit} 
           isOpen={isAddPlacePopupOpen} 
           onClose={closeAllPopups} />
-
-        
-
-
 
         <PopupWithForm name="delete" title="Вы уверены?" />
 

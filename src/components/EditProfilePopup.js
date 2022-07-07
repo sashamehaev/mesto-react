@@ -8,8 +8,6 @@ function EditProfilePopup(props) {
     const [description, setDescription] = React.useState('');
     const currentUser = React.useContext(CurrentUserContext);
 
-
-
     function handleSubmit(e) {
 
         e.preventDefault();
@@ -24,8 +22,6 @@ function EditProfilePopup(props) {
         setName(currentUser.name);
         setDescription(currentUser.about);
     }, [currentUser, isOpen]);
-
-    
 
     return (
 

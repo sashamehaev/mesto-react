@@ -5,7 +5,6 @@ import btnUser from '../images/edit-button.svg';
 import btnCard from '../images/add-button.svg';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-
 function Main(props) {
     const currentUser = React.useContext(CurrentUserContext);
 
@@ -15,7 +14,7 @@ function Main(props) {
                 <div className="profile__container">
                     <div onClick={props.onEditAvatar} className="profile__container-avatar">
                         <div className="profile__edit-photo-container">
-                            <img src={btnAvatar} className="profile__edit-photo" />
+                            <img alt="Фото аватара" src={btnAvatar} className="profile__edit-photo" />
                         </div>
                         <img alt="Фото профиля" src={currentUser.avatar} className="profile__avatar" />
                     </div>
@@ -48,7 +47,6 @@ function Main(props) {
             </section>
         </main>
     );
-
 
 }
 
